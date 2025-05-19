@@ -2,38 +2,65 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 
+estudiantes = {}
+
 def pantalla_inicio():
     limpiar_area_dinamica()
-    tk.Label(area_dinamica, text="¡Bienvenido a la aplicacion!", font=("Arial", 14)).pack(pady=10)
-    tk.Button(area_dinamica, text="Mostrar mensaje de bienvenida", command=lambda: messagebox.showinfo("Bienvenida", "Hola!")).pack()
+    tk.Label(area_dinamica, text="Bienvenido a la aplicacion", font=("Georgia", 14)).pack(pady=10)
+    tk.Button(area_dinamica, text="Mostrar mensaje de bienvenida", command=lambda: messagebox.showinfo("Bienvenida", "Holaaaa!")).pack()
 
 def pantalla_datos_alumno():
     limpiar_area_dinamica()
-    tk.Label(area_dinamica, text="Ingresa tus datos:", font=("Arial", 14)).pack(pady=10)
+    tk.Label(area_dinamica, text="Ingresa los datos del alumno:", font=("Times New Roman", 14)).pack(pady=10)
 
     tk.Label(area_dinamica, text="Nombre del alumno:").pack()
     campo_nombre = tk.Entry(area_dinamica)
     campo_nombre.pack(pady=5)
 
-    tk.Label(area_dinamica, text="Selecciona una opcion:").pack()
-    opcion_elegida = tk.StringVar(value="Opcion 1")
-    tk.Radiobutton(area_dinamica, text="Opcion 1", variable=opcion_elegida, value="Opcion 1").pack()
-    tk.Radiobutton(area_dinamica, text="Opcion 2", variable=opcion_elegida, value="Opcion 2").pack()
+    tk.Label(area_dinamica, text="Calificacion:").pack()
+    campo_calificacion = tk.Entry(area_dinamica)
+    campo_calificacion.pack(pady=5)
 
-    tk.Label(area_dinamica, text="Selecciona de la lista:").pack()
-    combo = ttk.Combobox(area_dinamica, values=["Uno", "Dos", "Tres"])
-    combo.pack()
-    combo.current(0)
+    tk.Label(area_dinamica, text="Sexo (M/F):").pack()
+    campo_sexo = tk.Entry(area_dinamica)
+    campo_sexo.pack(pady=5)
 
     def guardar_datos():
         nombre = campo_nombre.get()
-        messagebox.showinfo("Datos ingresados", f"Nombre: {nombre}\nSeleccion: {opcion_elegida.get()}\nLista: {combo.get()}")
+        try:
+            calificacion = float(campo_calificacion.get())
+        except ValueError:
+            messagebox.showerror("Error", "La calificacion debe ser un numero.")
+            return
+        sexo = campo_sexo.get().upper()
 
-    tk.Button(area_dinamica, text="Guardar datos del alumno", command=guardar_datos).pack(pady=10)
+        if nombre and sexo in ["M", "F"]:
+            estudiantes[nombre] = {
+                "calificacion": round(calificacion, 2),
+                "sexo": sexo
+            }
+            messagebox.showinfo("Guardado", f"Alumno {nombre} guardado correctamente.")
+            campo_nombre.delete(0, tk.END)
+            campo_calificacion.delete(0, tk.END)
+            campo_sexo.delete(0, tk.END)
+        else:
+            messagebox.showerror("Error", "Datos invalidos. Revisa los campos.")
+
+    def mostrar_estudiantes():
+        if not estudiantes:
+            messagebox.showinfo("Estudiantes", "No hay estudiantes ingresados.")
+            return
+        texto = "Lista de estudiantes:\n"
+        for nombre, datos in estudiantes.items():
+            texto += f"{nombre} - Calificacion: {datos['calificacion']}, Sexo: {datos['sexo']}\n"
+        messagebox.showinfo("Estudiantes", texto)
+
+    tk.Button(area_dinamica, text="Guardar datos del alumno", command=guardar_datos).pack(pady=5)
+    tk.Button(area_dinamica, text="Ver estudiantes", command=mostrar_estudiantes).pack(pady=5)
 
 def pantalla_configuracion():
     limpiar_area_dinamica()
-    tk.Label(area_dinamica, text="Configuraciones de fondo", font=("Arial", 14)).pack(pady=10)
+    tk.Label(area_dinamica, text="Configuraciones de fondo", font=("Comic Sans MS", 14)).pack(pady=10)
 
     colores = ["lightblue", "lightgreen", "lightyellow", "lightgray"]
     tk.Label(area_dinamica, text="Cambiar color de fondo:").pack()
